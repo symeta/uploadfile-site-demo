@@ -135,7 +135,7 @@
 
                 updateProgress(10);
                 log('Calling API to get presigned URL...');
-                const response = await fetch('https://c5oy6b4jcd.execute-api.us-east-1.amazonaws.com/dev/upload', {
+                const response = await fetch('<api-gateway-endpoint-url>', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
