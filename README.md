@@ -100,6 +100,36 @@
        - Enable CORS
        - Deploy API to stage
       
-
+  -7. create an SNS topic and subscribe the topic to an email address
+        ```sh
+        aws sns create-topic --name file-upload-notification
+        
+        aws sns subscribe \
+            --topic-arn arn:aws:sns:<region-id>:<account-id>:file-upload-notification \
+            --protocol email \
+            --notification-endpoint <email-address>
+        ```
+  -8. edite **Access Policy** of the SNS topic as per json below
+        ```json
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "AllowS3ToPublishToSNS",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "s3.amazonaws.com"
+              },
+              "Action": "SNS:Publish",
+              "Resource": "arn:aws:sns:us-east-1:020509302229:file-upload-notification",
+              "Condition": {
+                "ArnLike": {
+                  "aws:SourceArn": "arn:aws:s3:::upload-destination-bucket-shiyang"
+                }
+              }
+            }
+          ]
+        }
+```
 
 ## demo video
