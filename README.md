@@ -101,7 +101,7 @@
        - Enable CORS
        - Deploy API to stage
       
-  -7. create an SNS topic and subscribe the topic to an email address
+  - 7. create an SNS topic and subscribe the topic to an email address
       
 ```sh
 aws sns create-topic --name file-upload-notification
@@ -111,7 +111,7 @@ aws sns subscribe \
     --protocol email \
     --notification-endpoint <email-address>
 ```
-  -8. edite **Access Policy** of the SNS topic as per json below
+  - 8. edite **Access Policy** of the SNS topic as per json below
 ```json
 {
   "Version": "2012-10-17",
@@ -133,5 +133,20 @@ aws sns subscribe \
   ]
 }
 ```
+  - 9. enable s3 bucket event messaging per below command
+
+```sh
+aws s3api put-bucket-notification-configuration \
+    --bucket upload-destination-bucket-shiyang \
+    --notification-configuration '{
+        "TopicConfigurations": [
+            {
+                "TopicArn": "arn:aws:sns:us-east-1:020509302229:file-upload-notification",
+                "Events": ["s3:ObjectCreated:*"]
+            }
+        ]
+    }'
+```
+        
 
 ## demo video
