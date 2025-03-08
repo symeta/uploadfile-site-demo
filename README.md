@@ -10,14 +10,14 @@
 
 
 ## deployment guidance
-  - 1. create two s3 bucket, one is for static s3 website (e.g. website-bucket-shiyang), one is file uploading destination (e.g. upload-destination-bucket-shiyang).
+  - 1. create two s3 bucket, one is for static s3 website (e.g. website-bucket), one is file uploading destination (e.g. upload-destination-bucket).
   - 2. **Permissions Tab**
 
        - config the two s3 buckets' Block Public Access to **off** as per snapshot shown below.
        <img width="1213" alt="Screenshot 2025-03-08 at 14 52 52" src="https://github.com/user-attachments/assets/9d676233-2e8b-46ce-bb5b-05b9e7065da7" />
   - 3. **Permissions Tab**
 
-       - config bucket website-bucket-shiyang's bucket policy per below json.
+       - config bucket website-bucket's bucket policy per below json.
         ```json
         {
             "Version": "2012-10-17",
@@ -27,12 +27,12 @@
                     "Effect": "Allow",
                     "Principal": "*",
                     "Action": "s3:GetObject",
-                    "Resource": "arn:aws:s3:::website-bucket-shiyang/*"
+                    "Resource": "arn:aws:s3:::website-bucket/*"
                 }
             ]
         }
         ```
-        - config bucket upload-destination-bucket-shiyang's bucket policy per below json
+        - config bucket upload-destination-bucket's bucket policy per below json
         ```json
         {
             "Version": "2012-10-17",
@@ -42,12 +42,12 @@
                     "Effect": "Allow",
                     "Principal": "*",
                     "Action": "s3:PutObject",
-                    "Resource": "arn:aws:s3:::upload-destination-bucket-shiyang/*"
+                    "Resource": "arn:aws:s3:::upload-destination-bucket/*"
                 }
             ]
         }
         ```
-        - config bucket upload-destination-bucket-shiyang's Cross-origin resource sharing (CORS) per below json
+        - config bucket upload-destination-bucket's Cross-origin resource sharing (CORS) per below json
         ```json
         [
             {
@@ -73,7 +73,7 @@
         
   - 4. **Properties Tab**
 
-       - enable bucket website-bucket-shiyang's Static Web Hosting
+       - enable bucket website-bucket's Static Web Hosting
        <img width="1208" alt="Screenshot 2025-03-08 at 14 59 50" src="https://github.com/user-attachments/assets/d7a4ce4a-6b98-4b59-a496-a693e59a97a9" />
   
   - 5. create lambda using Python, the code per
@@ -91,7 +91,7 @@
           				"s3:GetObject"
           			],
           			"Resource": [
-          				"arn:aws:s3:::upload-destination-bucket-shiyang/*"
+          				"arn:aws:s3:::upload-destination-bucket/*"
           			]
           		}
           	]
@@ -126,10 +126,10 @@ aws sns subscribe \
         "Service": "s3.amazonaws.com"
       },
       "Action": "SNS:Publish",
-      "Resource": "arn:aws:sns:us-east-1:020509302229:file-upload-notification",
+      "Resource": "arn:aws:sns:<region-id>:<account-id>:file-upload-notification",
       "Condition": {
         "ArnLike": {
-          "aws:SourceArn": "arn:aws:s3:::upload-destination-bucket-shiyang"
+          "aws:SourceArn": "arn:aws:s3:::upload-destination-bucket"
         }
       }
     }
@@ -140,11 +140,11 @@ aws sns subscribe \
 
 ```sh
 aws s3api put-bucket-notification-configuration \
-    --bucket upload-destination-bucket-shiyang \
+    --bucket upload-destination-bucket \
     --notification-configuration '{
         "TopicConfigurations": [
             {
-                "TopicArn": "arn:aws:sns:us-east-1:020509302229:file-upload-notification",
+                "TopicArn": "arn:aws:sns:<region-id>:<account-id>:file-upload-notification",
                 "Events": ["s3:ObjectCreated:*"]
             }
         ]
