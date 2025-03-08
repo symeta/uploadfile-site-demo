@@ -6,6 +6,9 @@
 
 ## architecture diagram
 
+<img width="914" alt="image" src="https://github.com/user-attachments/assets/a82ad5f2-167e-425d-b4d2-2926407b0b66" />
+
+
 ## deployment guidance
   - 1. create two s3 bucket, one is for static s3 website (e.g. website-bucket-shiyang), one is file uploading destination (e.g. upload-destination-bucket-shiyang).
   - 2. **Permissions Tab**
